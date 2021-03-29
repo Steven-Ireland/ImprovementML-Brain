@@ -1,0 +1,28 @@
+
+// Current size: 15 floats
+[
+    /* Body Piece Rotations, expandable */
+    0, // Head rotation X
+    0, // Head rotation Y
+    0, // Body rotation X
+    0, // Body rotation Y
+
+    /* Body Piece Angular Velocities, expandable */
+    0, // Head angular velocity X
+    0, // Head angular velocity Y
+    0, // Head Angular velocity Z 
+    0, // Body angular velocity X
+    0, // Body angular velocity Y
+    0, // Body Angular velocity Z 
+
+    /* Joint Angles, expandable */
+    0, // Neck Angle
+    0, // Knee Angle (weird that we go right from neck to knee, lol)
+
+    /* Joint Speeds, expandable */
+    0, // Neck speed
+    0, // Body speed
+
+    /* Foot ground contacts, binary, expandable */
+    0 // Foot contact
+]
