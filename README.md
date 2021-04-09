@@ -6,4 +6,6 @@ This repo exists to capture the core ML side of ImprovementML, used in conjuncti
 
 ![Architecture](img/RoughArchitecture.PNG)
 
-See stevenire.land for project updates or technical progress
+Occasionally streaming the training process at http://twitch.tv/scientaster
+
+See stevenire.land for project updates or technical progress.
