@@ -2,9 +2,12 @@ import socket
 from gym import spaces
 from operator import itemgetter
 import json
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize
+from stable_baselines import PPO2
+from stable_baselines.common.policies import MlpLstmPolicy
+from stable_baselines.common.vec_env import SubprocVecEnv, VecNormalize
 import numpy as np
+
+import tensorflow as tf
 
 import game_env
 
@@ -26,6 +29,8 @@ def make_env(rank):
         greeting = clientsocket.recv(BUF_SIZE).decode()
         observation_size, action_size = itemgetter('observationSize', 'actionSize')(json.loads(greeting))
 
+        print("Socket " + str(7776 + rank) + " connected")
+
         # See observation.jsonc for the spec        
         ## TODO: Make the space size dynamically driven from the unity scene
         high = np.array([np.inf] * observation_size)
@@ -40,14 +45,16 @@ def make_env(rank):
     return thunk
 
 if __name__ == "__main__":
-    env = VecNormalize(SubprocVecEnv([make_env(i) for i in range(0,12)])) #, norm_obs=True, norm_reward=True)
+    tf.test.is_gpu_available(cuda_only=False, min_cuda_compute_capability=None)
 
-    model = PPO("MlpPolicy", env, verbose=1, 
+    env = VecNormalize(SubprocVecEnv([make_env(i) for i in range(0,8)])) #, norm_obs=True, norm_reward=True)
+
+    model = PPO2(MlpLstmPolicy, env, verbose=1, 
         n_steps=2048,
-        ent_coef=0.001,
-        batch_size=36)
+        ent_coef=0.001)
 
     for i in range(20):
+        print("STARTING ROUND " + str(i))
         model.learn(total_timesteps=1000000)
         model.save("isitworking")
         print("FINISHED ROUND")
