@@ -2,8 +2,7 @@ import socket
 from gym import spaces
 from operator import itemgetter
 import json
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv #, VecNormalize
+from stable_baselines.ppo2 import PPO2
 import numpy as np
 
 import game_env
@@ -33,7 +32,7 @@ action_space = spaces.Box(np.array([-1] * action_size), np.array([1] * action_si
 env = game_env.GameEnv(clientsocket, observation_space, action_space)
 obs = env.reset()
 
-model = PPO.load("isitworking")
+model = PPO2.load("isitworking")
 
 obs = env.reset()
 for i in range(1000):
