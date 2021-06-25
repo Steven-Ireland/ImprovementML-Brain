@@ -1,7 +1,8 @@
 import json
 from operator import itemgetter
-from gym import Env
+from gym import Env, spaces
 import numpy as np
+import socket
 
 BUF_SIZE = 8192
 
@@ -20,7 +21,7 @@ class GameEnv(Env):
         self.socket.send(json.dumps({'actions': actions.tolist()}).encode()) # Send actions to game
         #print(f"Sent actions, waiting for response")
         resp = self.socket.recv(BUF_SIZE).decode() # Get observation, reward back
-        #print(f"Got response {resp}")
+        #print(f"Got response {resp}", flush=True)
 
         reward, observations, done = itemgetter('reward', 'observations', 'done')(json.loads(resp))
 
@@ -34,7 +35,6 @@ class GameEnv(Env):
         resp = self.socket.recv(BUF_SIZE).decode()
         observations = itemgetter('observations')(json.loads(resp))
 
-        #print(f"Got response {resp}")
         return np.array(observations)
     
     def render(self):
@@ -45,3 +45,28 @@ class GameEnv(Env):
     
     def seed(self, seed):
         self.seed = seed
+
+def make_env(rank):
+    def thunk():
+        # create an INET, STREAMing socket
+        serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # bind the socket to a public host, and a well-known port
+        serversocket.bind(('', 7776 + rank))
+        # become a server socket
+        serversocket.listen(1)
+
+        (clientsocket, address) = serversocket.accept()
+
+        greeting = clientsocket.recv(BUF_SIZE).decode()
+        observation_size, action_size = itemgetter('observation_size', 'action_size')(json.loads(greeting))
+
+        high = np.array([np.inf] * observation_size)
+        observation_space = spaces.Box(-high, high, dtype='float32')
+        action_space = spaces.Box(np.array([-1] * action_size), np.array([1] * action_size), dtype='float32')
+        
+        env = GameEnv(clientsocket, observation_space, action_space)
+        obs = env.reset()
+
+        return env
+        
+    return thunk
