@@ -2,13 +2,15 @@ from gym import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import SubprocVecEnv #, VecNormalize
 import numpy as np
+import sys
 
 import game_env
 
 BUF_SIZE = 8192
 
 if __name__ == "__main__":
-    env = SubprocVecEnv([game_env.make_env(i) for i in range(1)]) #, norm_obs=True, norm_reward=True)
+
+    env = SubprocVecEnv([game_env.make_env(i) for i in range(int(sys.argv[1]))]) #, norm_obs=True, norm_reward=True)
 
     model = PPO("MlpPolicy", env, verbose=1)
 

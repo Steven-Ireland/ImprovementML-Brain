@@ -1,4 +1,4 @@
-![Super Basic 2 Joint 3 Body Learner](img/basic-demo.gif)
+![Super Basic 2 Joint 3 Body Learner](img/next-gen.gif)
 
 # ImprovementML Backend
 

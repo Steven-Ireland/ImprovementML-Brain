@@ -58,14 +58,16 @@ def make_env(rank):
         (clientsocket, address) = serversocket.accept()
 
         greeting = clientsocket.recv(BUF_SIZE).decode()
-        observation_size, action_size = itemgetter('observation_size', 'action_size')(json.loads(greeting))
+        observation_size, action_size = itemgetter('observationSize', 'actionSize')(json.loads(greeting))
 
         high = np.array([np.inf] * observation_size)
         observation_space = spaces.Box(-high, high, dtype='float32')
         action_space = spaces.Box(np.array([-1] * action_size), np.array([1] * action_size), dtype='float32')
+
+        print(f"Game Env {rank} set up", flush=True)
         
         env = GameEnv(clientsocket, observation_space, action_space)
-        obs = env.reset()
+        env.reset()
 
         return env
         
