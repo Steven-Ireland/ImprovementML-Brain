@@ -13,10 +13,11 @@ if __name__ == "__main__":
 
     model = PPO("MlpPolicy", env, verbose=1)
 
-    for i in range(10):
+    for i in range(20):
         print(f"-----EPOCH {i}-----", flush=True)
         model.learn(total_timesteps=1000000)
-        model.save(f"isitworking{i}")
+        if (i%5 == 0):
+            model.save(f"isitworking{i}")
 
     # obs = env.reset()
     # for i in range(1000):
