@@ -9,7 +9,6 @@ import game_env
 BUF_SIZE = 8192
 
 if __name__ == "__main__":
-
     env = SubprocVecEnv([game_env.make_env(i) for i in range(int(sys.argv[1]))]) #, norm_obs=True, norm_reward=True)
 
     model = PPO("MlpPolicy", env, verbose=1)
@@ -17,7 +16,7 @@ if __name__ == "__main__":
     for i in range(10):
         print(f"-----EPOCH {i}-----", flush=True)
         model.learn(total_timesteps=1000000)
-        model.save("isitworking")
+        model.save(f"isitworking{i}")
 
     # obs = env.reset()
     # for i in range(1000):
