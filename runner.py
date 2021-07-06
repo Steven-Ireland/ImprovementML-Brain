@@ -1,14 +1,13 @@
-from stable_baselines3 import PPO
+from stable_baselines import PPO2
 from operator import itemgetter
 import numpy as np
-import json
 from urllib.parse import unquote
 import time 
 import cherrypy
 
 cherrypy.config.update({'server.socket_port': 7775})
 
-model = PPO.load("isitworking9")
+model = PPO2.load("trained_agent_40")
 
 class Root(object):
     @cherrypy.expose

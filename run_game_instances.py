@@ -13,7 +13,7 @@ GAME_PATH = "C:\\Users\\scien\\ImprovementML\\bin\\ImprovementML.exe"
 def start_client(rank, render=False):
     opts = ""
     if (not render):
-        opts += " -batchmode -nographics"
+        opts += f" -batchmode -nographics "
     
     os.system(GAME_PATH + " -p " + str(rank + 7776) + opts)
 
