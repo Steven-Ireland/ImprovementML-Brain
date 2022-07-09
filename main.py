@@ -7,15 +7,17 @@ import game_env
 
 BUF_SIZE = 8192
 
+policy_kwargs = dict(net_arch=[256, 128, 128])
+
 if __name__ == "__main__":
     env = SubprocVecEnv([game_env.make_env(i) for i in range(int(sys.argv[1]))]) #, norm_obs=True, norm_reward=True)
 
-    model = PPO2("MlpPolicy", env, n_steps=1024, verbose=True)
+    model = PPO2("MlpPolicy", env, n_steps=1024, verbose=True, policy_kwargs=policy_kwargs, tensorboard_log="./logs/")
 
-    for i in range(41):
+    for i in range(100):
         print(f"-----EPOCH {i}-----", flush=True)
         model.learn(total_timesteps=1000000)
-        if (i%10 == 0):
+        if (i%5 == 0):
             model.save(f"trained_agent_{i}")
 
     # obs = env.reset()

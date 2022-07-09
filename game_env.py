@@ -17,7 +17,7 @@ class GameEnv(Env):
         self.action_space = action_space
 
     def step(self, actions):
-        #print(f"Sending actions {actions}")
+        # print(f"Sending actions {actions}")
         self.socket.send(json.dumps({'actions': actions.tolist()}).encode()) # Send actions to game
         #print(f"Sent actions, waiting for response")
         resp = self.socket.recv(BUF_SIZE).decode() # Get observation, reward back
@@ -54,6 +54,8 @@ def make_env(rank):
         serversocket.bind(('', 7776 + rank))
         # become a server socket
         serversocket.listen(1)
+
+        print(f"waiting for connection on port {7776 + rank}", flush=True)
 
         (clientsocket, address) = serversocket.accept()
 

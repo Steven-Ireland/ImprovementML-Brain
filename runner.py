@@ -7,7 +7,7 @@ import cherrypy
 
 cherrypy.config.update({'server.socket_port': 7775})
 
-model = PPO2.load("trained_agent_40")
+model = PPO2.load("trained_agent_50")
 
 class Root(object):
     @cherrypy.expose
@@ -17,7 +17,9 @@ class Root(object):
         observations = itemgetter('observations')(cherrypy.request.json)
 
         print(time.perf_counter())
+        print(observations)
         actions, _state =  model.predict(np.array(observations), deterministic=True)
+        print(actions)
         print(time.perf_counter(), flush=True)
         
         return({
