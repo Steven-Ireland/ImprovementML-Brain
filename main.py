@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     model = PPO2("MlpPolicy", env, n_steps=1024, verbose=True, policy_kwargs=policy_kwargs, tensorboard_log="./logs/")
 
-    for i in range(100):
+    for i in range(101):
         print(f"-----EPOCH {i}-----", flush=True)
         model.learn(total_timesteps=1000000)
         if (i%5 == 0):
