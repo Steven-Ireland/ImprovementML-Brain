@@ -10,20 +10,23 @@ BUF_SIZE = 8192
 
 GAME_PATH = "C:\\Users\\scien\\ImprovementML\\bin\\ImprovementML.exe"
 
-def start_client(rank, render=False):
+def start_client(rank, num_internal, render=False):
     opts = ""
     if (not render):
         opts += f" -batchmode -nographics "
+
+    offset = num_internal * rank
     
-    os.system(GAME_PATH + " -p " + str(rank + 7776) + opts)
+    os.system(GAME_PATH + " -p " + str(offset + 7776) + " -n " + str(num_internal) + opts)
 
 if __name__ == "__main__":
     procs = []
     num_clients = int(sys.argv[1])
-    render = len(sys.argv) > 2
+    num_internal = int(sys.argv[2])
+    render = len(sys.argv) > 3
     for i in range(num_clients):
         print(f"Starting client {i}", flush=True)
-        client = mp.Process(target=start_client, args=(i,render,))
+        client = mp.Process(target=start_client, args=(i,num_internal, render,))
         client.start()
         procs.append(client)
         time.sleep(0.5)
