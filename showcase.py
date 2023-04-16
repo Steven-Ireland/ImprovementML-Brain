@@ -8,7 +8,7 @@ import game_env
 if __name__ == "__main__":
     env = game_env.make_env(0)()
 
-    model = PPO2.load("trained_agent_40")
+    model = PPO2.load("trained_agent_5")
 
     obs = env.reset()
 

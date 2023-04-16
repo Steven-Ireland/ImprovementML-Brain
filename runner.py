@@ -4,10 +4,14 @@ import numpy as np
 from urllib.parse import unquote
 import time 
 import cherrypy
+import pickle
 
 cherrypy.config.update({'server.socket_port': 7775})
 
-model = PPO2.load("trained_agent_50")
+model = PPO2.load("trained_agent_5")
+with open('environment_5', 'rb') as f:
+    vec_normalize = pickle.load(f)
+
 
 class Root(object):
     @cherrypy.expose
@@ -18,7 +22,7 @@ class Root(object):
 
         print(time.perf_counter())
         print(observations)
-        actions, _state =  model.predict(np.array(observations), deterministic=True)
+        actions, _state =  model.predict(vec_normalize.normalize_obs(np.array(observations)), deterministic=True)
         print(actions)
         print(time.perf_counter(), flush=True)
         
@@ -27,6 +31,10 @@ class Root(object):
         })
 
 if __name__ == "__main__":
+    print("|||||||||||||||||")
+    print(vec_normalize.obs_rms)
+    print("|||||||||||||||||")
+
     try:
         cherrypy.quickstart(Root(), '/')
     except KeyboardInterrupt:
