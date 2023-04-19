@@ -8,7 +8,7 @@ NUM_CLIENTS = 8
 BASE_PORT = 7776
 BUF_SIZE = 8192
 
-GAME_PATH = "C:\\Users\\scien\\ImprovementML\\bin\\ImprovementML.exe"
+GAME_PATH = "/mnt/c/Users/scien/ImprovementML/bin/ImprovementML.exe"
 
 def start_client(rank, num_internal, render=False):
     opts = ""
