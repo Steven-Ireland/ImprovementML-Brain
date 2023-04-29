@@ -50,9 +50,13 @@ class UnityEnv(MultiAgentEnv):
         self,
         port: int = None,
     ):
+        # TODO: Initialize environment based on skeleton file
+        self.action_space = action_space
+        self.observation_space = observation_space
+        
         super().__init__()
 
-        # Try connecting to the Unity3D game instance. If a port is blocked
+        # Try connecting to the Unity3D game instance. If a port is blocked try again
         clientsocket = None
         while True:
             try:
@@ -77,9 +81,7 @@ class UnityEnv(MultiAgentEnv):
 
             break
         
-        # TODO: Initialize environment based on skeleton file
-        self.action_space = action_space
-        self.observation_space = observation_space
+        self.done_agents = {}
 
     def step(
         self, action_dict: MultiAgentDict
@@ -106,9 +108,15 @@ class UnityEnv(MultiAgentEnv):
         """
 
         #print(f"Sending actions {action_dict}")
+        #action_items = list(filter(lambda k: k[0] not in self.done_agents, action_dict.items()))
 
+        step_request = {
+           "agents": [{"name": agent_name, "actions": actions.tolist()} for (agent_name, actions) in action_dict.items()]
+        }
         
-        socket_write(self.socket, json.dumps(map_object(lambda ac: {"actions": ac.tolist()}, action_dict))) # Send actions to game
+        #print(f"Sending actions for {len(action_items)} agents")
+        
+        socket_write(self.socket, json.dumps(step_request)) # Send actions to game
         
         #print(f"Sent actions, waiting for response")
 
@@ -118,10 +126,25 @@ class UnityEnv(MultiAgentEnv):
         after_step=datetime.datetime.now()
         delta = after_step - before_step
 
-        print(f"Action retrieval took {delta.seconds}s {delta.microseconds / 1000.00}ms")
+        #print(f"Action retrieval took {delta.seconds}s {delta.microseconds / 1000.00}ms")
         #print(f"Got response {resp}", flush=True)
 
-        agent_result_dict = json.loads(resp)
+        agent_result_raw = json.loads(resp)
+        agent_result_dict = {
+           v["name"]: v for v in agent_result_raw["agents"]
+        }
+
+        #print(f"Got raw response {agent_result_raw}", flush=True)
+        #print(f"Got processed response {agent_result_dict}", flush=True)
+
+        for k,v in agent_result_dict.items():
+           if v['done']:
+              self.done_agents[k] = True
+        
+        for agent_name, is_done in self.done_agents.items():
+           if is_done and agent_name in agent_result_dict:
+              agent_result_dict.pop(agent_name)
+
         return process_step_result(agent_result_dict)
 
     def reset(
@@ -140,10 +163,13 @@ class UnityEnv(MultiAgentEnv):
         #print("Sent Reset")
 
         resp = socket_read(self.socket)
-        agent_result_dict = json.loads(resp)
-
+        agent_result_raw = json.loads(resp)
+        agent_result_dict = {
+           v["name"]: v for v in agent_result_raw["agents"]
+        }
         #print(f"Got reset {agent_result_dict}")
 
+        self.done_agents = {}
         observations, _, _, _, infos = process_step_result(agent_result_dict)
 
         return (observations, infos)

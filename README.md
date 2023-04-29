@@ -1,3 +1,5 @@
+![Complex Procedurally Generated 6 Leg Skeleton](img/6-leg-webp.webp)
+
 ![Super Basic 2 Joint 3 Body Learner](img/next-gen.gif)
 
 ![Complex many jointed learner](img/big_walker.gif)
